@@ -16,7 +16,7 @@
         .remove-btn { background: red; }
         .warning-btn { background: orange; color: white; }
         .good-btn { background: blue; color: white; }
-        .reset-btn { background: darkred; color: white; width: 100%; padding: 10px; margin-top: 15px; }
+        .reset-btn { background: darkred; color: white; width: 50%; padding: 10px; margin-top: 15px; }
 
         /* تأثير عند الضغط على الأزرار */
         .btn:active { transform: scale(0.9); }
@@ -82,12 +82,12 @@
                     <img src="${student.image}" alt="صورة الطالب">
                     <p class="stats">🏆 النقاط: <strong id="${student.name}_score">${score}</strong></p>
                     <p class="stats">⚠️ المخالفات: <strong id="${student.name}_warnings">${warnings}</strong></p>
-                    <p class="stats">🌟 السلوك الجيد: <strong id="${student.name}_good">${goodBehavior}</strong></p>
+                    <p class="stats">🌟 احسان: <strong id="${student.name}_good">${goodBehavior}</strong></p>
 
                     <button class="btn add-btn" onclick="modifyScore('${student.name}', '_score_s6_4', 1, 'success-sound')">+ نقطة</button>
                     <button class="btn remove-btn" onclick="modifyScore('${student.name}', '_score_s6_4', -1, 'error-sound')">- نقطة</button>
                     <button class="btn warning-btn" onclick="modifyScore('${student.name}', '_warnings_s6_4', 1, 'warning-sound')">⚠️ مخالفة</button>
-                    <button class="btn good-btn" onclick="modifyScore('${student.name}', '_good_s6_4', 1, 'good-sound')">🌟 سلوك جيد</button>
+                    <button class="btn good-btn" onclick="modifyScore('${student.name}', '_good_s6_4', 1, 'good-sound')">🌟 احسان</button>
                 `;
                 listContainer.appendChild(studentDiv);
             });
