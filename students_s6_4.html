@@ -7,8 +7,9 @@
     <style>
         body { font-family: Arial, sans-serif; direction: rtl; text-align: center; background-color: #f4f4f4; }
         .container { max-width: 1100px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
-        .student-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; text-align: center; }
-        .student-box { padding: 10px; background: #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); transition: 0.3s; }
+        .student-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; text-align: center; }
+        .student-box { padding: 10px; background: #ddd; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); transition: 0.3s; position: relative; }
+        .student-box img { width: 200px; height: 150px; margin-bottom: 5px; } /* الصورة بدون إطار */
         .stats { font-size: 16px; margin-top: 5px; }
         .btn { padding: 8px; margin: 3px; border: none; cursor: pointer; border-radius: 5px; font-size: 14px; width: 90%; transition: transform 0.1s, background 0.2s; }
         .add-btn { background: green; color: white; }
@@ -18,14 +19,10 @@
         .reset-btn { background: darkred; color: white; width: 100%; padding: 10px; margin-top: 15px; }
 
         /* تأثير عند الضغط على الأزرار */
-        .btn:active {
-            transform: scale(0.9);
-        }
+        .btn:active { transform: scale(0.9); }
 
         /* تأثير الوميض عند تحديث القيم */
-        .highlight {
-            animation: flash 0.5s;
-        }
+        .highlight { animation: flash 0.5s; }
 
         @keyframes flash {
             0% { background-color: yellow; }
@@ -43,63 +40,54 @@
     </div>
 
     <!-- تحميل المؤثرات الصوتية -->
-    <audio id="success-sound" src="success.mp3"></audio> <!-- صوت عند إضافة نقطة -->
-    <audio id="error-sound" src="error.mp3"></audio> <!-- صوت عند إنقاص نقطة -->
-    <audio id="warning-sound" src="warning.mp3"></audio> <!-- صوت عند إضافة مخالفة -->
-    <audio id="good-sound" src="good.mp3"></audio> <!-- صوت عند إضافة سلوك جيد -->
+    <audio id="success-sound" src="success.mp3"></audio>
+    <audio id="error-sound" src="error.mp3"></audio>
+    <audio id="warning-sound" src="warning.mp3"></audio>
+    <audio id="good-sound" src="good.mp3"></audio>
 
     <script>
         const students = [
-            "خالد على محمد الربيط المرى",
-            "فيصل حمد على حمد الفهيدى",
-            "فهد على سعيد المسعود المرى",
-            "احمد طورجول عبدالقيوم خان",
-            "سعيد صالح سعيد المري",
-            "سعيد محمد سعيد عبدالله مسعود",
-            "سلطان معمر عبدالقوى ناصر السابقي",
-            "شاجع صالح شاجع ال هديسان",
-            "صالح سالم صالح المري",
-            "علي سعيد على سعيد دهمه",
-            "علي عبدالله على عبدالله نشيره",
-            "محمد على محمد غويرب النابت",
-            "محمد مهدى جابر المفرح الاحبابى",
-            "محمد ناصر على الجربوعى المرى",
-            "مسعود محمد ابراهيم",
-            "سلطان فراد",
-            "انس علي حسن نيك محمد",
-            "ناصر عبدالرؤف غلام حبيب نجاب"
+            { name: "احمد طورجول عبدالقيوم خان", image: "images/student1.jpg" },
+            { name: "انس علي حسن نيك محمد", image: "images/student2.jpg" },
+            { name: "خالد على محمد الربيط المرى", image: "images/student3.jpg" },
+            { name: "سعيد صالح سعيد المري", image: "images/student4.jpg" },
+            { name: "سعيد محمد سعيد عبدالله مسعود", image: "images/student5.jpg" },
+            { name: "سلطان فراد", image: "images/student6.jpg" },
+            { name: "سلطان معمر عبدالقوى ناصر السابقي", image: "images/student7.jpg" },
+            { name: "شاجع صالح شاجع ال هديسان", image: "images/student8.jpg" },
+            { name: "صالح سالم صالح المري", image: "images/student9.jpg" },
+            { name: "علي سعيد على سعيد دهمه", image: "images/student10.jpg" },
+            { name: "علي عبدالله على عبدالله نشيره", image: "images/student11.jpg" },
+            { name: "فهد على سعيد المسعود المرى", image: "images/student12.jpg" },
+            { name: "فيصل حمد على حمد الفهيدى", image: "images/student13.jpg" },
+            { name: "محمد على محمد غويرب النابت", image: "images/student14.jpg" },
+            { name: "محمد مهدى جابر المفرح الاحبابى", image: "images/student15.jpg" },
+            { name: "محمد ناصر على الجربوعى المرى", image: "images/student16.jpg" },
+            { name: "مسعود محمد ابراهيم", image: "images/student17.jpg" },
+            { name: "ناصر عبدالرؤف غلام حبيب نجاب", image: "images/student18.jpg" }
         ];
-
-        function formatName(fullName) {
-            let parts = fullName.split(" ");
-            if (parts.length >= 3) {
-                return parts[0] + " " + parts[1] + " " + parts[parts.length - 1];
-            }
-            return fullName;
-        }
 
         function updateStudentList() {
             const listContainer = document.getElementById("student-list");
             listContainer.innerHTML = "";
 
             students.forEach(student => {
-                let shortName = formatName(student);
-                let score = JSON.parse(localStorage.getItem(student + "_score_s6_4")) || 0;
-                let warnings = JSON.parse(localStorage.getItem(student + "_warnings_s6_4")) || 0;
-                let goodBehavior = JSON.parse(localStorage.getItem(student + "_good_s6_4")) || 0;
+                let score = JSON.parse(localStorage.getItem(student.name + "_score_s6_4")) || 0;
+                let warnings = JSON.parse(localStorage.getItem(student.name + "_warnings_s6_4")) || 0;
+                let goodBehavior = JSON.parse(localStorage.getItem(student.name + "_good_s6_4")) || 0;
 
                 let studentDiv = document.createElement("div");
                 studentDiv.className = "student-box";
                 studentDiv.innerHTML = `
-                    <h3>${shortName}</h3>
-                    <p class="stats">🏆 النقاط: <strong id="${student}_score">${score}</strong></p>
-                    <p class="stats">⚠️ المخالفات: <strong id="${student}_warnings">${warnings}</strong></p>
-                    <p class="stats">🌟 السلوك الجيد: <strong id="${student}_good">${goodBehavior}</strong></p>
+                    <img src="${student.image}" alt="صورة الطالب">
+                    <p class="stats">🏆 النقاط: <strong id="${student.name}_score">${score}</strong></p>
+                    <p class="stats">⚠️ المخالفات: <strong id="${student.name}_warnings">${warnings}</strong></p>
+                    <p class="stats">🌟 السلوك الجيد: <strong id="${student.name}_good">${goodBehavior}</strong></p>
 
-                    <button class="btn add-btn" onclick="modifyScore('${student}', '_score_s6_4', 1, 'success-sound')">+ نقطة</button>
-                    <button class="btn remove-btn" onclick="modifyScore('${student}', '_score_s6_4', -1, 'error-sound')">- نقطة</button>
-                    <button class="btn warning-btn" onclick="modifyScore('${student}', '_warnings_s6_4', 1, 'warning-sound')">⚠️ مخالفة</button>
-                    <button class="btn good-btn" onclick="modifyScore('${student}', '_good_s6_4', 1, 'good-sound')">🌟 سلوك جيد</button>
+                    <button class="btn add-btn" onclick="modifyScore('${student.name}', '_score_s6_4', 1, 'success-sound')">+ نقطة</button>
+                    <button class="btn remove-btn" onclick="modifyScore('${student.name}', '_score_s6_4', -1, 'error-sound')">- نقطة</button>
+                    <button class="btn warning-btn" onclick="modifyScore('${student.name}', '_warnings_s6_4', 1, 'warning-sound')">⚠️ مخالفة</button>
+                    <button class="btn good-btn" onclick="modifyScore('${student.name}', '_good_s6_4', 1, 'good-sound')">🌟 سلوك جيد</button>
                 `;
                 listContainer.appendChild(studentDiv);
             });
@@ -110,29 +98,14 @@
             let currentValue = JSON.parse(localStorage.getItem(fieldKey)) || 0;
             currentValue += amount;
             localStorage.setItem(fieldKey, JSON.stringify(currentValue));
-
-            let fieldElement = document.getElementById(student + key.replace("_s6_4", ""));
-            fieldElement.innerText = currentValue;
-
-            let sound = document.getElementById(soundId);
-            if (sound) {
-                sound.play();
-            }
-
-            fieldElement.classList.add("highlight");
-            setTimeout(() => fieldElement.classList.remove("highlight"), 500);
+            document.getElementById(student + key.replace("_s6_4", "")).innerText = currentValue;
+            document.getElementById(soundId).play();
         }
 
         function resetAllScores() {
             if (confirm("هل أنت متأكد من إعادة تعيين جميع البيانات؟")) {
-                students.forEach(student => {
-                    localStorage.setItem(student + "_score_s6_4", JSON.stringify(0));
-                    localStorage.setItem(student + "_warnings_s6_4", JSON.stringify(0));
-                    localStorage.setItem(student + "_good_s6_4", JSON.stringify(0));
-                });
-
+                students.forEach(student => localStorage.clear());
                 updateStudentList();
-                alert("تم إعادة تعيين جميع البيانات!");
             }
         }
 
