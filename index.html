@@ -9,7 +9,7 @@
         .container { max-width: 1400px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 10px; }
         .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; }
         .team-box { padding: 15px; background: #ddd; border-radius: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); transition: 0.3s; }
-        .team-box img { width: 130px; height: 200px; border-radius: 10px; margin-bottom: 10px; } /* صورة الفريق */
+        .team-box img { width: 140px; height: 220px; border-radius: 10px; margin-bottom: 10px; } /* صورة الفريق */
         .team-name { font-size: 20px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .team-score { font-size: 20px; font-weight: bold; color: #007BFF; }
         .shots-container { font-size: 18px; font-weight: bold; margin: 10px 0; }
@@ -69,9 +69,9 @@
 
                     <table class="stats-table">
                         <tr>
-                            <th>⚽ الأهداف المسجلة</th>
+                            <th>⚽ الأهداف-المسجلة</th>
                             <td id="${team.name}_goalsFor_s6_4">${goalsFor}</td>
-                            <th>🥅 الأهداف عليه</th>
+                            <th>🥅 الأهداف-المستقبلة</th>
                             <td id="${team.name}_goalsAgainst_s6_4">${goalsAgainst}</td>
                             <th>🧤 التصديات</th>
                             <td id="${team.name}_saves_s6_4">${saves}</td>
@@ -101,14 +101,14 @@
             });
         }
 
-        function addGoal(team) { modifyScore(team, 2); modifyStat(team, "_goalsFor", 1); }
-        function removeGoal(team) { modifyScore(team, -2); modifyStat(team, "_goalsFor", -1); }
-        function addGoalAgainst(team) { modifyScore(team, -1); modifyStat(team, "_goalsAgainst", 1); }
-        function removeGoalAgainst(team) { modifyScore(team, 1); modifyStat(team, "_goalsAgainst", -1); }
-        function addSave(team) { modifyScore(team, 1); modifyStat(team, "_saves", 1); }
-        function removeSave(team) { modifyScore(team, -1); modifyStat(team, "_saves", -1); }
-        function addShot(team) { modifyStat(team, "_shots", 1); }
-        function removeShot(team) { modifyStat(team, "_shots", -1); }
+        function addGoal(team) { modifyScore(team, 2); modifyStat(team, "_goalsFor_s6_4", 1); }
+        function removeGoal(team) { modifyScore(team, -2); modifyStat(team, "_goalsFor_s6_4", -1); }
+        function addGoalAgainst(team) { modifyScore(team, -1); modifyStat(team, "_goalsAgainst_s6_4", 1); }
+        function removeGoalAgainst(team) { modifyScore(team, 1); modifyStat(team, "_goalsAgainst_s6_4", -1); }
+        function addSave(team) { modifyScore(team, 1); modifyStat(team, "_saves_s6_4", 1); }
+        function removeSave(team) { modifyScore(team, -1); modifyStat(team, "_saves_s6_4", -1); }
+        function addShot(team) { modifyStat(team, "_shots_s6_4", 1); }
+        function removeShot(team) { modifyStat(team, "_shots_s6_4", -1); }
 
         function modifyScore(team, amount) {
             let score = JSON.parse(localStorage.getItem(team + "_score_s6_4")) || 0;
