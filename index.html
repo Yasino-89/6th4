@@ -42,6 +42,8 @@
             { name: "الهلال", image: "images/alhilal.png", link: "al-helal.html" }
         ];
 
+        const abilities = ["مهاجم", "جناح", "وسط", "مدافع", "حارس"];
+
         function updateTeamStats() {
             const statsContainer = document.getElementById("team-stats");
             statsContainer.innerHTML = "";
@@ -94,10 +96,29 @@
                         <button class="btn remove-btn" onclick="modifyStat('${team.name}', '_shots_s6_4', -1, 0)">- تسديدة</button>
                     </div>
 
+                      <h3>🛡 القدرات الخاصة</h3>
+                    <button class="btn add-btn" id="${team.name}_shot3_s6_7" onclick="toggleAbility('${team.name}', 'shot3')">⚡ تسديدة بـ3 أهداف</button>
+                    <button class="btn add-btn" id="${team.name}_save2_s6_7" onclick="toggleAbility('${team.name}', 'save2')">🧤 تصدي بـ2</button>
+
+                    <h3>🔄 القدرة المضاعفة</h3>
+                    ${abilities.map(ability => `
+                        <button class="btn add-btn" id="${team.name}_${ability}_s6_7" onclick="toggleAbility('${team.name}', '${ability}')">
+                            ${ability.charAt(0).toUpperCase() + ability.slice(1)}
+                        </button>
+                    `).join("")}
+
                     <a href="${team.link}"><button class="team-btn">🔍 عرض صفحة الفريق</button></a>
                 `;
                 statsContainer.appendChild(teamDiv);
+
+                updateAbilityButtons(team.name);
             });
+        }
+
+        function toggleAbility(team, ability) {
+            let status = JSON.parse(localStorage.getItem(team + "_" + ability + "_s6_7")) || false;
+            localStorage.setItem(team + "_" + ability + "_s6_7", JSON.stringify(!status));
+            updateAbilityButtons(team);
         }
 
         function modifyStat(team, stat, amount, scoreChange) {
@@ -114,8 +135,23 @@
             }
         }
 
+
+        function updateAbilityButtons(team) {
+            ["shot3", "save2", ...abilities].forEach(ability => {
+                let button = document.getElementById(`${team}_${ability}_s6_7`);
+                if (button) {
+                    let status = JSON.parse(localStorage.getItem(team + "_" + ability + "_s6_7")) || false;
+                    button.classList.toggle("active", status);
+                }
+            });
+        }
+        
         function resetAllScores() {
-            teams.forEach(team => localStorage.clear());
+            teams.forEach(team => {
+                ["shot3", "save2", ...abilities].forEach(ability => {
+                    localStorage.setItem(team.name + "_" + ability + "_s6_7", JSON.stringify(false));
+                });
+            });
             updateTeamStats();
         }
 
