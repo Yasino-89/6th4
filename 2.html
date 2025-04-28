@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مباراة النسبة المئوية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-color);
+        }
+        
+        h1 {
+            margin-top: 20px;
+            color: var(--dark-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-size: 2.2rem;
+        }
+        
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .timer-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .timer-icon {
+            margin-left: 8px;
+            font-size: 1.4rem;
+        }
+        
+        .timer.warning {
+            color: #f1c40f;
+            animation: pulse 1s infinite;
+        }
+        
+        .timer.danger {
+            color: #e74c3c;
+            animation: pulse 0.5s infinite;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 80px repeat(5, 120px);
+            grid-auto-rows: 120px;
+            grid-gap: 10px;
+            justify-content: center;
+            margin: 50px auto 30px;
+            perspective: 1000px;
+        }
+        
+        .header, .cell {
+            background-color: white;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            box-sizing: border-box;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .cell {
+            cursor: pointer;
+            flex-direction: column;
+            padding: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cell:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .cell:active {
+            transform: translateY(1px);
+        }
+        
+        .cell.selected {
+            border: 3px solid var(--accent-color);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .cell[data-answered] {
+            background-color: #f8f9fa;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            animation: zoomIn 0.3s ease-out;
+            text-align: center;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .modal-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            min-width: 120px;
+        }
+        
+        .modal-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .modal-button:active {
+            transform: translateY(1px);
+        }
+        
+        .modal-button.real {
+            background-color: #f1c40f;
+            color: white;
+        }
+        
+        .modal-button.liverpool {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .modal-button.hilal {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: confetti-fall 5s linear forwards;
+            z-index: 1000;
+        }
+        
+        .time-up-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(231, 76, 60, 0.95);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            z-index: 1001;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: zoomIn 0.5s ease-out;
+            text-align: center;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .win-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(46, 204, 113, 0.95);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            z-index: 1001;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: zoomIn 0.5s ease-out;
+            text-align: center;
+        }
+        
+        .team-name {
+            display: block;
+            font-size: 2.5rem;
+            margin-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="timer-container">
+        <span class="timer-icon">⏱️</span>
+        <span class="timer" id="timer">10:00</span>
+    </div>
+    
+    <h1>مباراة النسبة المئوية</h1>
+    <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const logos = {
+    real: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
+    liverpool: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg",
+    hilal: "https://logodownload.org/wp-content/uploads/2019/12/al-hilal-logo.png"
+};
+
+const teamNames = {
+    real: "ريال مدريد",
+    liverpool: "ليفربول",
+    hilal: "الهلال"
+};
+
+let currentCell = null;
+let gameActive = true;
+let timeLeft = 600; // 10 دقائق بالثواني
+
+const colHeaders = ["12", "15", "18", "24", "30"];
+const rowHeaders = ["60", "80", "90", "120"];
+
+const gridData = Array(30).fill("");
+
+// بدء المؤقت
+const timer = setInterval(updateTimer, 1000);
+
+function updateTimer() {
+    if (!gameActive) return;
+    
+    timeLeft--;
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    
+    const timerElement = document.getElementById('timer');
+    timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    
+    // تغيير اللون عند اقتراب انتهاء الوقت
+    if (timeLeft <= 60) { // آخر دقيقة
+        timerElement.classList.add('danger');
+        timerElement.classList.remove('warning');
+    } else if (timeLeft <= 180) { // آخر 3 دقائق
+        timerElement.classList.add('warning');
+    }
+    
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        gameActive = false;
+        showTimeUpMessage();
+    }
+}
+
+function showTimeUpMessage() {
+    const timeUpDiv = document.createElement('div');
+    timeUpDiv.className = 'time-up-message';
+    timeUpDiv.innerHTML = `
+        <div>انتهى الوقت!</div>
+        <div style="margin-top:20px;font-size:1.2rem;">تم انتهاء مدة المسابقة</div>
+        <button class="modal-button" onclick="this.parentElement.remove()" style="margin-top:20px;background:white;color:var(--dark-color);">إغلاق</button>
+    `;
+    
+    document.body.appendChild(timeUpDiv);
+}
+
+function createGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    
+    for (let i = 0; i < gridData.length; i++) {
+        const div = document.createElement('div');
+        if (i === 0) {
+            div.className = 'header';
+            div.textContent = "";
+        } else if (i > 0 && i < 6) {
+            div.className = 'header';
+            div.textContent = colHeaders[i - 1];
+        } else if (i % 6 === 0) {
+            div.className = 'header';
+            div.textContent = rowHeaders[(i / 6) - 1];
+        } else {
+            div.className = 'cell';
+            div.textContent = "";
+            div.addEventListener('click', () => selectCell(div));
+        }
+        grid.appendChild(div);
+    }
+}
+
+function selectCell(cell) {
+    if (!gameActive) {
+        alert('انتهى وقت المسابقة!');
+        return;
+    }
+    
+    if (cell.dataset.answered) return;
+    
+    // Remove selection from previous cell
+    if (currentCell) {
+        currentCell.classList.remove('selected');
+    }
+    
+    currentCell = cell;
+    cell.classList.add('selected');
+    
+    showHintModal();
+}
+
+function showHintModal() {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <div class="modal-title">حساب النسبة المئوية</div>
+        <div class="modal-content">
+            ✏️ لحساب النسبة المئوية:<br>
+            اقسم الجزء على الكل ثم اضرب الناتج في 100.<br><br>
+            من الفريق الذي أجاب بشكل صحيح؟
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-button real" onclick="answer('real')">ريال مدريد</button>
+            <button class="modal-button liverpool" onclick="answer('liverpool')">ليفربول</button>
+            <button class="modal-button hilal" onclick="answer('hilal')">الهلال</button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
+}
+
+function closeModal() {
+    document.querySelector('.modal')?.remove();
+    document.querySelector('.overlay')?.remove();
+    if (currentCell) {
+        currentCell.classList.remove('selected');
+        currentCell = null;
+    }
+}
+
+function answer(team) {
+    if (!currentCell || !gameActive) return;
+    
+    // Create team logo image
+    const img = document.createElement('img');
+    img.src = logos[team];
+    img.style.width = '80px';
+    img.style.height = '100px';
+    img.style.objectFit = 'contain';
+    img.alt = teamNames[team];
+    
+    // Add animation class
+    currentCell.classList.add('answered');
+    
+    // Clear cell and add image
+    currentCell.innerHTML = '';
+    currentCell.appendChild(img);
+    currentCell.dataset.answered = 'true';
+    currentCell.dataset.team = team;
+    currentCell.classList.remove('selected');
+    
+    // Close modal
+    closeModal();
+    
+    // Check for winner
+    checkWinner();
+}
+
+function checkWinner() {
+    const cells = document.querySelectorAll('.cell');
+    const winPatterns = [
+        [1,2,3], [4,5,6], [7,8,9], [10,11,12],
+        [1,4,7,10], [2,5,8,11], [3,6,9,12],
+        [1,5,9], [3,5,7]
+    ];
+
+    let winner = null;
+    
+    winPatterns.forEach(pattern => {
+        const teams = pattern.map(i => cells[i-1]?.dataset.team);
+        if (teams.every(team => team && team === teams[0])) {
+            winner = teams[0];
+        }
+    });
+
+    if (winner) {
+        showWinner(winner);
+        gameActive = false;
+        clearInterval(timer);
+    }
+}
+
+function showWinner(team) {
+    // Create confetti
+    createConfetti();
+    
+    // Create winner message
+    const winDiv = document.createElement('div');
+    winDiv.className = 'win-message';
+    winDiv.innerHTML = `
+        <div>الفائز هو:</div>
+        <span class="team-name">${teamNames[team]}</span>
+        <div style="margin-top:20px;font-size:1.2rem;">مبروك! لقد فزتم بالمباراة!</div>
+        <button class="modal-button" onclick="this.parentElement.remove()" style="margin-top:20px;background:white;color:var(--dark-color);">إغلاق</button>
+    `;
+    
+    document.body.appendChild(winDiv);
+}
+
+function createConfetti() {
+    const colors = ['#f1c40f', '#e74c3c', '#2ecc71', '#3498db', '#9b59b6'];
+    
+    for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = Math.random() * 10 + 5 + 'px';
+        confetti.style.height = Math.random() * 10 + 5 + 'px';
+        confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+        document.body.appendChild(confetti);
+        
+        // Remove confetti after animation
+        setTimeout(() => {
+            confetti.remove();
+        }, 5000);
+    }
+}
+
+createGrid();
+</script>
+
+</body>
+</html>
