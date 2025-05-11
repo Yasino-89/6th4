@@ -435,9 +435,13 @@
         }
 
         function toggleAbility(team, ability) {
-            let status = JSON.parse(localStorage.getItem(team + "_" + ability + "_s6_7")) || false;
-            localStorage.setItem(team + "_" + ability + "_s6_7", JSON.stringify(!status));
-            updateAbilityButtons(team);
+    const key = team + "_" + ability + "_s6_7";
+    let status = JSON.parse(localStorage.getItem(key)) || false;
+    status = !status;
+    localStorage.setItem(key, JSON.stringify(status));
+    updateAbilityButtons(team);
+}
+
             
             // تأثير النقر
             const button = document.getElementById(`${team}_${ability}_s6_7`);
