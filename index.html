@@ -5,8 +5,356 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تسجيل النقاط - سادس 4</title>
     <style>
-        /* [نفس التنسيق الموجود سابقاً بدون تعديل] */
-        /* ... */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s ease;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 25px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .container:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-size: 2.2em;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+        
+        .team-box {
+            padding: 20px;
+            background: linear-gradient(145deg, #f9f9f9, #ffffff);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .team-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+        
+        .team-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+        }
+        
+        .team-box:hover::before {
+            width: 8px;
+        }
+        
+        .team-box img {
+            width: 180px;
+            height: 210px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .team-box:hover img {
+            transform: scale(1.05);
+        }
+        
+        .team-name {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .team-score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007BFF;
+            text-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .shots-container {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8B0000;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(139, 0, 0, 0.08);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .shots-container:hover {
+            background: rgba(139, 0, 0, 0.12);
+            transform: scale(1.02);
+        }
+        
+        .stats-table {
+            width: 100%;
+            margin: 15px auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stats-table th, .stats-table td {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .stats-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .stats-table tr:hover td {
+            background-color: #f1f8ff;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .btn {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 15px;
+            width: 48%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .add-btn {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+        }
+        
+        .remove-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+        
+        .team-btn {
+            background: linear-gradient(135deg, #007bff, #0069d9);
+            color: white;
+            padding: 12px;
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .team-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #dc3545, #bd2130);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        .active {
+            background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+            color: #212529 !important;
+            box-shadow: 0 0 0 2px #ffc107, 0 4px 8px rgba(255, 193, 7, 0.3) !important;
+        }
+        
+        /* تأثيرات النقر */
+        .btn:active {
+            transform: scale(0.95) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* تأثيرات للعنوان */
+        h1 {
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 3px;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+        }
+        
+        h1:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        /* تأثيرات للقدرات الخاصة */
+        h3 {
+            color: #495057;
+            margin: 15px 0 10px;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(to right, #6c757d, transparent);
+        }
+        
+        /* تأثيرات للصور عند التحميل */
+        img {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* تأثيرات للعناصر عند التحميل */
+        .team-box {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUpBox 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInUpBox {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* تأخير للعناصر */
+        .team-box:nth-child(1) { animation-delay: 0.1s; }
+        .team-box:nth-child(2) { animation-delay: 0.2s; }
+        .team-box:nth-child(3) { animation-delay: 0.3s; }
+        
+        /* تأثيرات للنتيجة عند التغيير */
+        .score-change {
+            animation: scorePulse 0.5s ease;
+        }
+        
+        @keyframes scorePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* تأثيرات للزر النشط */
+        .active {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .active::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        /* تأثير النقر على الأزرار */
+        .btn.click-effect {
+            animation: clickShine 0.3s ease;
+        }
+        
+        @keyframes clickShine {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            50% { box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.7); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
     </style>
 </head>
 <body>
@@ -45,9 +393,11 @@
                         ${team.name}
                         <span class="team-score" id="${team.name}_score_s6_4">${score}</span>
                     </div>
+
                     <div class="shots-container">
                         🎯 التسديدات المتاحة: <strong id="${team.name}_shots_s6_4">${shots}</strong>
                     </div>
+
                     <table class="stats-table">
                         <tr>
                             <th>⚽ الأهداف المسجلة</th>
@@ -58,6 +408,7 @@
                             <td id="${team.name}_saves_s6_4">${saves}</td>
                         </tr>
                     </table>
+
                     <div class="btn-container">
                         <button class="btn add-btn" onclick="modifyStat('${team.name}', '_goalsFor_s6_4', 1, 2)">+ هدف</button>
                         <button class="btn remove-btn" onclick="modifyStat('${team.name}', '_goalsFor_s6_4', -1, -2)">- هدف</button>
@@ -74,84 +425,128 @@
                         <button class="btn add-btn" onclick="modifyStat('${team.name}', '_shots_s6_4', 1, 0)">+ تسديدة</button>
                         <button class="btn remove-btn" onclick="modifyStat('${team.name}', '_shots_s6_4', -1, 0)">- تسديدة</button>
                     </div>
+
                     <h3>🛡 القدرات الخاصة</h3>
                     <button class="btn add-btn" id="${team.name}_shot3_s6_7" onclick="toggleAbility('${team.name}', 'shot3')">⚡ تسديدة بـ3 أهداف</button>
                     <button class="btn add-btn" id="${team.name}_save2_s6_7" onclick="toggleAbility('${team.name}', 'save2')">🧤 تصدي بـ2</button>
+
                     <h3>🔄 القدرة المضاعفة</h3>
-                    ${abilities.map(ability => `
-                        <button class="btn add-btn" id="${team.name}_${ability}_s6_7" onclick="toggleAbility('${team.name}', '${ability}')">
-                            ${ability}
-                        </button>
-                    `).join("")}
+                    ${abilities.map(ability => 
+                        `<button class="btn add-btn" id="${team.name}_${ability}_s6_7" onclick="toggleAbility('${team.name}', '${ability}')">
+                            ${ability.charAt(0).toUpperCase() + ability.slice(1)}
+                        </button>`
+                    ).join("")}
+
                     <a href="${team.link}"><button class="team-btn">🔍 عرض صفحة الفريق</button></a>
                 `;
                 statsContainer.appendChild(teamDiv);
+
                 updateAbilityButtons(team.name);
             });
         }
 
         function toggleAbility(team, ability) {
-            const key = team + "_" + ability + "_s6_7";
-            let status = JSON.parse(localStorage.getItem(key)) || false;
-            status = !status;
-            localStorage.setItem(key, JSON.stringify(status));
-            updateAbilityButtons(team);
-        }
-
-        function updateAbilityButtons(team) {
-            ["shot3", "save2", ...abilities].forEach(ability => {
-                let button = document.getElementById(`${team}_${ability}_s6_7`);
-                if (button) {
-                    let status = JSON.parse(localStorage.getItem(team + "_" + ability + "_s6_7")) || false;
-                    button.classList.toggle("active", status);
-                }
-            });
+            let status = JSON.parse(localStorage.getItem(`${team}_${ability}_s6_7`)) || false;
+            localStorage.setItem(`${team}_${ability}_s6_7`, JSON.stringify(!status));
+            
+            // تأثير النقر
+            const button = document.getElementById(`${team}_${ability}_s6_7`);
+            if (button) {
+                button.classList.toggle('active');
+                
+                // تأثير اللمعان عند التبديل
+                button.classList.add('click-effect');
+                setTimeout(() => {
+                    button.classList.remove('click-effect');
+                }, 300);
+            }
         }
 
         function modifyStat(team, stat, amount, scoreChange) {
             let value = JSON.parse(localStorage.getItem(team + stat)) || 0;
             value = Math.max(0, value + amount);
             localStorage.setItem(team + stat, JSON.stringify(value));
+            
             const element = document.getElementById(`${team}${stat}`);
             if (element) {
                 element.innerText = value;
+                
+                // تأثير التغيير
                 element.classList.add('score-change');
-                setTimeout(() => element.classList.remove('score-change'), 500);
+                setTimeout(() => {
+                    element.classList.remove('score-change');
+                }, 500);
             }
+
             if (scoreChange !== 0) {
                 let score = JSON.parse(localStorage.getItem(team + "_score_s6_4")) || 0;
                 score += scoreChange;
                 localStorage.setItem(team + "_score_s6_4", JSON.stringify(score));
+                
                 const scoreElement = document.getElementById(`${team}_score_s6_4`);
                 if (scoreElement) {
                     scoreElement.innerText = score;
+                    
+                    // تأثير التغيير في النقاط
                     scoreElement.classList.add('score-change');
-                    setTimeout(() => scoreElement.classList.remove('score-change'), 500);
-                    scoreElement.style.color = scoreChange > 0 ? '#28a745' : '#dc3545';
-                    setTimeout(() => scoreElement.style.color = '#007BFF', 1000);
+                    setTimeout(() => {
+                        scoreElement.classList.remove('score-change');
+                    }, 500);
+                    
+                    // تأثير اللون عند الزيادة أو النقصان
+                    if (scoreChange > 0) {
+                        scoreElement.style.color = '#28a745';
+                        setTimeout(() => {
+                            scoreElement.style.color = '#007BFF';
+                        }, 1000);
+                    } else if (scoreChange < 0) {
+                        scoreElement.style.color = '#dc3545';
+                        setTimeout(() => {
+                            scoreElement.style.color = '#007BFF';
+                        }, 1000);
+                    }
                 }
             }
         }
 
+        function updateAbilityButtons(team) {
+            ["shot3", "save2", ...abilities].forEach(ability => {
+                let button = document.getElementById(`${team}_${ability}_s6_7`);
+                if (button) {
+                    let status = JSON.parse(localStorage.getItem(`${team}_${ability}_s6_7`)) || false;
+                    button.classList.toggle("active", status);
+                }
+            });
+        }
+        
         function resetAllScores() {
-            if (!confirm('هل أنت متأكد من أنك تريد إعادة تعيين جميع النقاط والإحصائيات؟')) return;
+            if (!confirm('هل أنت متأكد من أنك تريد إعادة تعيين جميع النقاط والإحصائيات؟')) {
+                return;
+            }
+            
+            // تأثير النقر على زر الإعادة
             const resetBtn = document.querySelector('.reset-btn');
             resetBtn.classList.add('active');
             setTimeout(() => resetBtn.classList.remove('active'), 200);
+            
             teams.forEach(team => {
                 ["_score_s6_4", "_goalsFor_s6_4", "_goalsAgainst_s6_4", "_saves_s6_4", "_shots_s6_4"].forEach(stat => {
                     localStorage.setItem(team.name + stat, JSON.stringify(0));
                 });
+                
                 ["shot3", "save2", ...abilities].forEach(ability => {
                     localStorage.setItem(team.name + "_" + ability + "_s6_7", JSON.stringify(false));
                 });
             });
+            
+            // تأثير بعد الإعادة
             setTimeout(() => {
                 updateTeamStats();
                 alert('تم إعادة تعيين جميع النقاط والإحصائيات بنجاح!');
             }, 500);
         }
 
+        // تأثير تحميل الصفحة
         document.body.style.opacity = '0';
         setTimeout(() => {
             document.body.style.transition = 'opacity 0.5s ease';
